@@ -57,5 +57,8 @@ public class User {
 		return true;
 	}
 	
+	public boolean isNew() {
+		return id == null;
+	}
 	
 }
