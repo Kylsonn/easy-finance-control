@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 import com.kbsystems.finance.builder.UserBuilder;
 import com.kbsystems.finance.domain.User;
 import com.kbsystems.finance.repository.UserRepository;
-import com.kbsystems.finance.service.exception.UserAlreadyExistsException;
+import com.kbsystems.finance.service.exception.ResourceAlreadyExistsException;
 
 public class UserServiceTest {
 	
@@ -28,7 +28,7 @@ public class UserServiceTest {
 		userService = new UserService(userRepository);
 	}
 	
-	@Test(expected = UserAlreadyExistsException.class)
+	@Test(expected = ResourceAlreadyExistsException.class)
 	public void create_new_user_deny_duplicate() {
 		UserBuilder userBuilder = new UserBuilder();
 		userBuilder.setPassword("a").setUsername("Kylsonn");

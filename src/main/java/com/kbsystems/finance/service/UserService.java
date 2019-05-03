@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.kbsystems.finance.domain.User;
 import com.kbsystems.finance.repository.UserRepository;
 import com.kbsystems.finance.service.exception.PasswordInvalidException;
-import com.kbsystems.finance.service.exception.UserAlreadyExistsException;
-import com.kbsystems.finance.service.exception.UserDoesntExistsException;
+import com.kbsystems.finance.service.exception.ResourceAlreadyExistsException;
+import com.kbsystems.finance.service.exception.ResourceNotFoundException;
 
 @Service
 public class UserService {
@@ -42,13 +42,13 @@ public class UserService {
 	private void verifyIfUserExistsByUsername(User user) {
 		User userByUsername = userRepository.findByUsername(user.getUsername()).orElse(null);
 		if (userByUsername != null && !userByUsername.equals(user)) {
-			throw new UserAlreadyExistsException();
+			throw new ResourceAlreadyExistsException(User.class.getSimpleName());
 		}
 	}
 	
 	private void verifyIfUserDoesntExistById(String id) {
 		if (!userRepository.findById(id).isPresent()) {
-			throw new UserDoesntExistsException();
+			throw new ResourceNotFoundException(User.class.getSimpleName());
 		}
 	}
 	

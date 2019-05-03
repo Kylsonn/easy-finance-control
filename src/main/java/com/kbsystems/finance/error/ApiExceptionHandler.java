@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.kbsystems.finance.error.ErrorResponse.ApiError;
 import com.kbsystems.finance.service.exception.BusinessException;
+import com.kbsystems.finance.service.exception.ResourceException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
@@ -48,6 +49,13 @@ public class ApiExceptionHandler {
 		return ResponseEntity.badRequest().body(errorResponse);
 	}
 
+	@ExceptionHandler(ResourceException.class)
+	public ResponseEntity<ErrorResponse> handleResourceException(ResourceException exception, Locale locale){
+		ApiError apiError = this.toApiError(exception.getCode(), locale, exception.getResourceName());
+		ErrorResponse errorResponse = ErrorResponse.of(exception.getStatus(), apiError);
+		return ResponseEntity.status(exception.getStatus()).body(errorResponse);
+	}
+	
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception, Locale locale){
 		ApiError apiError = this.toApiError(exception.getCode(), locale);
