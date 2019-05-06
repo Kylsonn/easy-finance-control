@@ -14,7 +14,7 @@ import com.kbsystems.finance.service.exception.ResourceNotFoundException;
 
 @Service
 public class UserService {
-	private static final String PASSWORD_RULE = "{8,30}";
+	private static final String PASSWORD_RULE = ".{8,30}";
 	private UserRepository userRepository;
 	
 	public UserService(@Autowired UserRepository userRepository) {
@@ -41,7 +41,8 @@ public class UserService {
 	
 	private void verifyIfUserExistsByUsername(User user) {
 		User userByUsername = userRepository.findByUsername(user.getUsername()).orElse(null);
-		if (userByUsername != null && !userByUsername.equals(user)) {
+		if (userByUsername != null && !userByUsername.equals(user) 
+				|| (user.isNew() && userByUsername != null)) {
 			throw new ResourceAlreadyExistsException(User.class.getSimpleName());
 		}
 	}
