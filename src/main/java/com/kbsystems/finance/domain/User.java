@@ -5,6 +5,8 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Document
 public class User {
 	@Id
@@ -57,6 +59,7 @@ public class User {
 		return true;
 	}
 	
+	@JsonIgnore
 	public boolean isNew() {
 		return id == null;
 	}

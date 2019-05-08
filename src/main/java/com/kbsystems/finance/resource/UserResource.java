@@ -1,10 +1,13 @@
 package com.kbsystems.finance.resource;
 
 import java.util.List;
+import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kbsystems.finance.domain.User;
+import com.kbsystems.finance.event.NewResourceEvent;
 import com.kbsystems.finance.service.UserService;
 
 @RestController
@@ -27,6 +31,9 @@ public class UserResource {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private ApplicationEventPublisher publisher;
+	
 	@GetMapping
 	public ResponseEntity<List<User>> all(){
 		List<User> users = userService.findAll();
@@ -34,10 +41,18 @@ public class UserResource {
 				: ResponseEntity.notFound().build();
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<User> findById(@PathVariable String id){
+		Optional<User> user = userService.findById(id);
+		return user.isPresent() ?  ResponseEntity.ok(user.get())
+				: ResponseEntity.notFound().build();
+	}
+	
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public User create(@Valid @RequestBody User user){
-		return userService.create(user);
+	public ResponseEntity<User> create(@Valid @RequestBody User user, HttpServletResponse response){
+		User userSaved = userService.create(user);
+		publisher.publishEvent(new NewResourceEvent(this, response, userSaved.getId()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
 	}
 	
 	@DeleteMapping("/{id}")

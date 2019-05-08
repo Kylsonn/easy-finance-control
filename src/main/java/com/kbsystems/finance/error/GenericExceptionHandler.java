@@ -25,6 +25,7 @@ public class GenericExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleGenericException(Exception exception, Locale locale){
 		ApiError apiError = apiExcetionHandler.toApiError("generic_error", locale);
 		ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, apiError);
+		exception.printStackTrace();
 		LOG.error(exception.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	}
